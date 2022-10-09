@@ -1,0 +1,109 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": 600,
+  "height": 480,
+  "title": "EV Sales and EV Charging Stations per Country (2021)",
+  "data": {
+    "url": "https://raw.githubusercontent.com/ychi0014/3179/main/three.csv"
+  },
+  "params": [
+    {
+      "name": "Sales_Above",
+      "value": 0,
+      "bind": {
+        "input": "range",
+        "min": 0,
+        "max": 100000,
+        "name": "Minimum Sales: "
+      }
+    }
+  ],
+  "transform": [
+    {"filter": "datum.sales > Sales_Above"},
+    {"filter": "datum.year > 2020"}
+  ],
+  "encoding": {
+    "x": {
+      "field": "renewables_percent",
+      "type": "quantitative", 
+      "axis": {"tickCount": 7},
+      "title": "Percentage of renewable energy (%)"
+    },
+    "y": {
+      "field": "charging_points",
+      "type": "quantitative",
+      "title": "EV Charging Stations",
+      "axis": {"tickCount": 6},
+      "scale": {"type": "log", "domain": [1, 1000000]}
+    }
+  },
+  "layer": [
+    {
+      "mark": "circle",
+      "encoding": {
+        "size": {
+          "field": "sales",
+          "type": "quantitative",
+          "scale": {
+            "type": "threshold",
+            "domain": [100, 1000, 10000, 100000, 1000000],
+            "range": [10, 75, 125, 250, 500, 1000]
+          },
+          "legend": {"title": "EV Sales"}
+        },
+        "color": {
+          "field": "renewables_percent",
+          "type": "quantitative",
+          "scale": {
+            "type": "threshold",
+            "domain": [5, 15, 25, 50, 75],
+            "range": [
+              "#E8F3DE",
+              "#C1E3B5",
+              "#68C078",
+              "#0B8E3E",
+              "#007C10",
+              "#134A00"
+            ]
+          },
+          "legend": {"title": "Use of renewables (%)"}
+        },
+        "opacity": {"value": 0.6},
+        "tooltip": [
+          {"field": "country", "title": "Country", "type": "nominal"},
+          {"field": "charging_points", "title": "Charging Stations",  "type": "quantitative", "format": ","},
+          {"field": "sales", "title": "EV Sales",  "type": "quantitative", "format": ","},
+          {"field": "renewables_percent", "title": "Use of renewables (%)",  "type": "quantitative", "format": ".2f"}
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "align": "right",
+        "baseline": "middle",
+        "dx": -12,
+        "fontSize": 11.5,
+        "fontStyle": "italic"
+      },
+      "encoding": {
+        "text": {"field": "country", "type": "nominal"},
+        "color": {"value": "black"},
+        "opacity": {
+          "condition": {
+            "test": "datum['country'] == 'Australia' || datum['country'] == 'China' || datum['country'] == 'Germany' || datum['country'] == 'Japan' || datum['country'] == 'Korea' || datum['country'] == 'Sweden' ||  datum['country'] == 'USA'",
+            "value": 1
+          },
+          "value": 0
+        },
+        "tooltip": [
+          {"field": "country", "title": "Country", "type": "nominal"},
+          {"field": "charging_points", "title": "Charging Stations",  "type": "quantitative", "format": ","},
+          {"field": "sales", "title": "EV Sales",  "type": "quantitative", "format": ","},
+          {"field": "renewables_percent", "title": "Use of renewables (%)",  "type": "quantitative", "format": ".2f"}
+        ]
+      }
+    }
+
+  ]
+}
